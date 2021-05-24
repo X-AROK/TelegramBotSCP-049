@@ -1,13 +1,34 @@
+import threading
 import telebot
 import phrases
 from database import Database
 import pyscp
 import re
+import datetime as dt
+import time
+import random
 
 bot = telebot.TeleBot('1724510257:AAG0wfkgQ-2kU4ba-1d-ihFyZ2KmfoBShpQ')
 db = Database("scp49.sqlite3")
 users = db.select_all()
 wiki = pyscp.wikidot.Wiki('scpfoundation.net')
+
+
+def check_time():
+    while True:
+        now = dt.datetime.now()
+        if now.hour == 1 and now.minute == 0:
+            send_msg_all(get_random_item(phrases.good_night))
+        time.sleep(60)
+
+
+def get_random_item(array):
+    i = random.randint(0, len(array) - 1)
+    return array[i]
+
+
+timer_thread = threading.Thread(target=check_time)
+timer_thread.start()
 
 
 @bot.message_handler(commands=['start', 'help'])
@@ -58,6 +79,11 @@ def send_admin_msg(message):
     msg = '\"' + msg + '\"'
     for user in users:
         bot.send_message(user[1], phrases.admin_msg + msg)
+
+
+def send_msg_all(message):
+    for user in users:
+        bot.send_message(user[1], message)
 
 
 def subscribe(userid):
