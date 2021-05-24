@@ -19,6 +19,8 @@ def check_time():
         now = dt.datetime.now()
         if now.hour == 1 and now.minute == 0:
             send_msg_all(get_random_item(phrases.good_night))
+        elif now.hour == 7 and now.minute == 0:
+            send_msg_all(get_random_item(phrases.good_morning))
         time.sleep(60)
 
 
